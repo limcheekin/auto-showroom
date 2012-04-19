@@ -1,0 +1,32 @@
+project --topLevelPackage com.springroo.autoshowroom --projectName auto-showroom
+persistence setup --provider HIBERNATE --database HYPERSONIC_IN_MEMORY
+
+enum type --class ~.domain.Model
+enum constant --name Audi
+enum constant --name BMW
+enum constant --name Ford
+enum constant --name Mercedes
+enum constant --name Opel
+enum constant --name Volvo
+enum constant --name VW
+
+entity jpa --class ~.domain.Car
+field string --fieldName modelName --notNull
+field enum --fieldName model --type ~.domain.Model --notNull 
+field number --fieldName price --type java.lang.Integer --notNull --min 10
+field date --fieldName dateOfProduction --type java.util.Date --past
+
+entity jpa --class ~.domain.Customer
+field string --fieldName name --sizeMax 20 --notNull
+field string --fieldName address --sizeMax 50 --notNull
+field string --fieldName email --regexp "[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+"
+field set --fieldName cars --type ~.domain.Car --mappedBy customer --notNull false --cardinality ONE_TO_MANY
+field reference --fieldName customer --class ~.domain.Car --type ~.domain.Customer --notNull
+
+web jsf setup --implementation APACHE_MYFACES --theme  START
+web jsf all --package ~.jsf
+
+perform tests
+perform package
+perform eclipse
+quit
